@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void Insert(), Print(), GetFront(), Delete(), Search(), Exit();  //학생 정보 등록,확인,첫번째로 등록한 학생정보 확인,정보 삭제, 정보 검색하는 함수
+int Queuecount();                                                //등록된 학생정보 갯수를 반환하는 함수
+
+
+struct Student {
+    char name[30];              //학생 이름
+    char sex[20];               //학생 성별
+    int num;                    //학생 학번
+    struct Student* next;       //다음 노드의 주소를 받아올 변수
+} *head, * tail, * stu;         //맨 앞과 맨 뒤를 알기 위해 head와 tail의 틀과 등록할 학생들의 틀 지정
+
+
+void GetFront() {
+    struct Student* front = (struct Student*)malloc(sizeof(struct Student));   //첫번째 head의 정보를 받을 구조체 메모리 할당
+    front = head;                                                              //head의 주소를 front에 대입
+    strcpy(front->name, head->name);                                           //head의 학생 이름을 front 학생 이름에 대입
+    strcpy(front->sex, head->sex);                                             //head의 학생 성별을 front 학생 성별에 대입
+    front->num = head->num;                                                     //head의 학생 학번을 front 학생 학번에 대입
+
+    printf("\n********************\n이름 : %s\n성별 : %s\n학번 : %d\n********************\n", front->name, front->sex, front->num);  //head의 정보를 잘 가져왔는지 확인
+}
+
+void Insert() {
+    char in_name[30];                                    //학생 이름을 지정 할 변수
+    char in_sex[20];                                    //학생 성별을 지정 할 변수
+    int in_num;                                        //학생 학번을 지정 할 변수
+    printf("\n학생 이름 입력 : ");
+    scanf("%s", in_name);                             //학생 이름 입력
+    printf("\n학생 성별 입력[남자,여자] : ");
+    scanf("%s", in_sex);                             //학생 성별 입력
+    printf("\n학생 학번 입력 : ");
+    scanf("%d", &in_num);                           //학생 학번 입력
+
+    stu = (struct Student*)malloc(sizeof(struct Student));  //등록할 학생의 정보를 받을 구조체 메모리 할당
+    if (head == NULL) {                                    //아직 등록된 학생이 없을 경우 head에 첫번째 주소를 대입
+        head = stu;
+    }
+    else {                                                 // 그 다음 등록되는 학생 부터는 새로 생성된 stu의 주소를 이전노드의 next에 대입
+        tail->next = stu;
+    }
+    strcpy(stu->name, in_name);                     //입력받은 학생 이름을 현재 노드에 대입
+    strcpy(stu->sex, in_sex);                       //입력받은 학생 성별을 현재 노드에 대입
+    stu->num = in_num;                              //입력받은 학생 학번을 현재 노드에 대입
+    stu->next = NULL;                               // 다음 노드는 없음으로 next에 NULL 지정
+    tail = stu;                                     //마지막으로 만들어진 노드 주소를 tail에 대입
+
+}
+
+void Print() {                             //등록된 학생 정보를 출력하기 위한 함수
+    stu = head;                            //처음 노드부터 순차적으로 보기위해 head에 주소를 가져옴
+    while (stu != NULL) {                  //next가 NULL이면 반복문 끝
+        printf("\n********************\n이름 : %s\n성별 : %s\n학번 : %d\n********************\n", stu->name, stu->sex, stu->num);  //해당 노드에 학생 정보 출력
+        stu = stu->next;                   //다음 노드의 주소가 저장되어있는 next로 이동
+    }
+    printf("\n");
+}
+
+int Queuecount() {                             //등록된 정보들의 갯수를 출력할 함수
+    int count = 0;                             //등록된 노드들의 갯수를 알기 위한 변수
+    stu = head;                                //처음 노드부터 순차적으로 총 몇개의 노드가 있는지 알기위해 head의 주소를 가져옴
+    while (stu != NULL) {                      //next가 NULL이면 반복문 끝
+        stu = stu->next;                       //다음 노드의 주소가 저장되어있는 next로 이동
+        count++;                               //다음 노드로 이동 될때 마다 count의 수를 1씩 증가
+    }
+    printf("\n등록된 학생 수 : %d 명\n\n", count);   //총 count의 증가수를 가져와 노드의 갯수 출력
+}
+
+void Delete() {                                  //삭제 할 학생을 이름으로 검색하여 해당 정보를 삭제하는 함수
+    char del_name[30];                           //삭제 할 학생의 이름을 받는 변수 지정
+    printf("삭제 할 학생의 이름을 입력하세요. : ");
+    scanf("%s", del_name);                       //삭제 할 학생의 이름 입력
+    stu = head;                                  //처음 등록된 학생부터 head부터 순차적으로 찾기 위해 stu를 head로 지정
+    if (strcmp(del_name, stu->name) == 0) {      //맨 처음 등록된 학생 이름과 입력한 학생 이름이 같으면 실행
+        head = stu->next;                        //맨 처음 등록된 학생의 정보를 삭제 해야 함으로 head 다음 노드로 head를 지정
+        printf("\n%s 학생 정보가 삭제 되었습니다.\n\n", stu->name);
+        free(stu);                               //맨 처음 노드의 메모리 반환하여 노드 삭제
+        return;                                  //다음으로 넘어 갈 필요 없이 여기서 함수를 끝냄
+    }
+    while (stu != NULL) {                             //맨 처음 노드를 지나 마지막 노드까지 살펴보기 위해 stu가 NULL이면 반복문을 빠져나오게 함
+        if (strcmp(del_name, stu->name) == 0) {      // 입력한 학생이름이 그 다음 노드의 이름과 같다면 조건문 실행
+            tail->next = stu->next;                  //해당 노드를 삭제하기 전 이전 노드의 next를 해당 노드 다음 노드로 지정해 줌
+            printf("\n%s 학생 정보가 삭제 되었습니다.\n\n", stu->name);
+            free(stu);                               //해당 노드의 메모리를 반환하여 노드 삭제
+            while (tail->next != NULL) {             //tail이 맨 마지막 노드를 가리켜야 함으로 tail의 next가 NULL이면 반복문을 빠져나오게 함
+                tail = tail->next;                   //tail의 next가 NULL이 아니면 다음 노드로 보냄
+            }
+            return;                                   //다음으로 넘어 갈 필요 없이 여기서 함수를 끝냄
+        }
+        tail = stu;                                  //맨 마지막 노드에 정보가 사라지면 tail을 다시 지정해 줘야 함으로 head와 같은 노드를 바라보는 stu와 같은 노드를 바라보게 지정
+        stu = stu->next;                             //맨 처음 노드에서 정보가 맞지 않음으로 다음 노드를 살펴보기위해 stu를 next로 보냄
+    }
+    printf("\n검색한 정보가 없습니다.\n\n");         //입력한 정보가 모든 노드에 없다면 검색한 정보가 없다는 것을 출력
+    return;                                          //다음으로 넘어 갈 필요 없이 여기서 함수를 끝냄
+}
+
+void Search() {
+    char sear_name[30];                                     //검색 할 학생의 이름을 받을 변수 지정
+    printf("검색 할 학생의 이름을 입력하세요. : ");
+    scanf("%s", sear_name);                                 //검색 할 학생이름 입력
+    stu = head;                                             //멘 처음 노드부터 확인 해야 함으로 stu을 head로 지정
+    while (stu != NULL) {                                    //stu가 NULL이면 반복문을 빠져나옴
+        if (strcmp(sear_name, stu->name) == 0) {            //검색한 학생 이름과 해당 노드의 이름이 같으면 조건문 실행
+            printf("\n********************\n이름 : %s\n성별 : %s\n학번 : %d\n********************\n\n", stu->name, stu->sex, stu->num);
+            return;                                         //다음으로 넘어 갈 필요 없이 여기서 함수를 끝냄
+        }
+        stu = stu->next;                                     //이번노드와 정보가 일치하지 않으면 다음노드 확인을 위해 stu를 다음 노드로 지정
+    }
+    printf("\n검색한 정보가 없습니다.\n\n");
+    return;                                                      //다음으로 넘어 갈 필요 없이 여기서 함수를 끝냄
+}
+
+void Exit() {
+    struct Student* temp;     //순차적으로 모든 노드의 정보를 지우게 위해 temp 구죠체를 만듬
+    stu = head;               //처음 노드부터 순차적으로 메모리 할당 해제를위해 head의 주소를 가져옴
+    while (stu != NULL) {    //stu가 NULL이면 반복문 끝
+        temp = stu->next;     //temp를 stu의 다음 노드로 지정
+        free(stu);           //stu의 메모리를 할당해제 합니다.
+        stu = temp;          //다음 노드의 주소가 저장되어있는 temp로 지정
+    }
+    printf("\n프로그램이 종료 됩니다.\n");
+}
+
+int main() {                                            //위 함수들을 선택하여 사용할수 있는 main 함수
+    head = NULL;                                        //처음 head에 NULL값을 넣어 초기화
+    int index, flag = 0;                                //index는 어떤 한수를 사용할지 선택하는 변수, flag는 이 프로그램을 종료 하기 전까지 계속 반복하기 위한 변수
+    while (flag == 0) {                                 //flag가 '0'이면 계속 반복
+        printf("메뉴를 고르시오 [(1) 학생 등록, (2) 등록된 학생 출력, (3)등록된 학생 수, (4)첫번째 등록된 학생 정보 보기, (5) 학생 정보 삭제, (6) 학생 검색, (7) 종료] : ");
+        scanf("%d", &index);                                    //index를 입력받음
+        if (index == 1) {                                        //index가 '1'일 경우 등록 하는 함수를 실행
+            Insert();
+        }
+        else if (index == 2) {                                   //index가 '2'일 경우 등록된 정보들을 출력하는 함수 실행
+            Print();
+        }
+        else if (index == 3) {                                  //index가 '3'일 경우 등록된 정보들의 수를 출력하는 함수 실행
+            Queuecount();
+        }
+        else if (index == 4) {                                 //index가 '4'일 경우 첫번째 학생의 정보를 출력하는 함수 실행
+            GetFront();
+        }
+        else if (index == 5) {                                  //index가 '5'일 경우 선택한 학번의 학생의 정보를 삭제하는 함수 실행
+            Delete();
+        }
+        else if (index == 6) {                                   //index가 '6'일 경우 선택한 학번의 학생의 정보를 검색하는 함수 실행
+            Search();
+        }
+        else if (index == 7) {                                   //index가 '6'일 경우 flag가 '1'이 되면서 해당 반복문을 끝냄
+            Exit();
+            flag = 1;
+        }
+        else {                                                   //그 외 숫자를 입력 할 시 다시 선택하라는 문구 출력
+            printf("\n보기에 있는 해당 메뉴 번호를 입력해 주세요.\n\n");
+        }
+    }
+    return 0;
+
+}
+
