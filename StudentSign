@@ -67,6 +67,7 @@ int Queuecount() {                             //등록된 정보들의 갯수�
         count++;                               //다음 노드로 이동 될때 마다 count의 수를 1씩 증가
     }
     printf("\n등록된 학생 수 : %d 명\n\n", count);   //총 count의 증가수를 가져와 노드의 갯수 출력
+    return 0;
 }
 
 void Delete() {                                  //삭제 할 학생을 이름으로 검색하여 해당 정보를 삭제하는 함수
