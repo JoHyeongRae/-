@@ -1,0 +1,47 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+/*
+c언어 콘솔창 게임 만들기 : Low, High 게임
+
+컴퓨터가 만든 임의의 숫자(1~100)을 플레이어가 맞추는 게임
+
+컴퓨터는 임의 숫자를 결정하고
+플레이어는 숫자를 입력하고 
+임의의 숫자보다 낮으면 UP 출력
+임의의 숫자보다 높으면 Down를 풀력
+같으면 OKAY 출력
+이떄 숫자를 몇번만에 맞췄는지 출력
+*/
+
+#include<time.h>
+
+int main(void) {
+	int com;
+	int player;
+	int count = 0;
+
+	srand(time(NULL));
+	com = rand()%100+1;
+
+	while (1) {
+		count ++;
+		printf("숫자를 맞춰보세요<1~100> : ");
+
+		scanf_s("%d", &player);
+
+		if (player > com) {
+			printf("DOWN \n");
+		}
+		else if (player < com) {
+			printf("UP \n");
+		}
+		else {
+			printf("%d번만에 정답\n", count);
+			break;
+		}
+	}
+
+	system("pause");
+	return 0;
+}
